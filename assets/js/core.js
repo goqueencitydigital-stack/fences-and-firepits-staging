@@ -126,10 +126,10 @@
   if (lb) {
     const img = lb.querySelector('img'), cap = lb.querySelector('.cap');
     let list = [], i = 0, lastFocus;
-    const show = () => { const it = list[i]; img.src = it.src; img.alt = it.alt; cap.textContent = it.alt + '  ·  ' + (i + 1) + ' / ' + list.length; };
+    const show = () => { const it = list[i]; img.src = it.src; img.alt = it.alt; cap.textContent = (it.cap || it.alt) + '  ·  ' + (i + 1) + ' / ' + list.length; };
     d.querySelectorAll('[data-lb]').forEach(btn => btn.addEventListener('click', () => {
       const g = btn.dataset.lb;
-      list = [...d.querySelectorAll('[data-lb="' + g + '"]')].map(b => ({ src: b.dataset.full, alt: b.querySelector('img').alt }));
+      list = [...d.querySelectorAll('[data-lb="' + g + '"]')].map(b => ({ src: b.dataset.full, alt: b.querySelector('img').alt, cap: b.dataset.cap }));
       i = list.findIndex(x => x.src === btn.dataset.full); lastFocus = btn;
       show(); lb.classList.add('open'); lb.querySelector('.x').focus(); d.body.style.overflow = 'hidden';
       w.ffTrack('gallery_open', { gallery: g });

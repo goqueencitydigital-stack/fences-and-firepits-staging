@@ -1340,3 +1340,18 @@ a.nchip:hover{border-color:var(--amber-ink,#94600F);text-decoration:underline}
  .rel-card .concept-tag{top:.4rem;left:.4rem;right:.4rem;font-size:.58rem;padding:.2rem .35rem;line-height:1.25;white-space:normal}
  .rel-card{aspect-ratio:1/1}.rel-cap b{font-size:.78rem}.rel-cap small{font-size:.6rem}}
 .sp-n{color:var(--amber-ink,#94600F)}
+.sp-chips{list-style:none;margin:1rem 0 0;padding:0;display:flex;flex-wrap:wrap;gap:.5rem}
+.sp-chips li{display:inline-flex;align-items:center;gap:.4rem;padding:.45rem .8rem;background:var(--paper-2);border:1px solid var(--line);font-size:.85rem;font-weight:600;color:#1A0F00}
+.sp-chips li svg{width:15px;height:15px;color:var(--amber-ink,#94600F)}
+.sp-chips a{color:#1A0F00;text-decoration:none}
+.sp-chips a:hover{text-decoration:underline}
+.sp-link{margin-top:.8rem!important}
+@media(min-width:1000px){.sopt-grid.four{grid-template-columns:repeat(4,1fr)}}
+.sopt-cta{display:flex;flex-direction:column;background:linear-gradient(170deg,var(--brown),var(--black));color:#e9dfca;text-decoration:none;border-color:transparent}
+.sopt-cta .sopt-n{background:var(--amber)!important;color:var(--brown)!important}
+.sopt-cta .sopt-n svg{width:20px;height:20px}
+.sopt-cta h3{color:#fff}
+.sopt-cta p{color:#e9dfca}
+.sopt-go{margin-top:auto;padding-top:1rem;font-family:var(--font-display);font-stretch:112%;font-weight:800;text-transform:uppercase;font-size:.78rem;color:var(--amber)}
+.gl-rates dd{color:var(--amber);font-weight:700}
+.more-h{margin:2.2rem 0 1rem}

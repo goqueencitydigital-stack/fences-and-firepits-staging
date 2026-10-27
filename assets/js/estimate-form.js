@@ -11,21 +11,27 @@ function init(root) {
   const opt = (arr, cur) => arr.map(([v, l]) => `<option value="${v}" ${String(v) === String(cur || '') ? 'selected' : ''}>${l}</option>`).join('');
   const pre = pj && pj.summary ? `<div class="prefill"><b>Added from the ${({ studio: 'Design Studio', calculator: 'Cost Calculator', planner: 'Fence Planner', quiz: 'Style Quiz' })[pj.origin] || 'site'}</b>${pj.summary.map(r => esc(r[0]) + ': ' + esc(r[1])).join(' · ')}<br><button type="button" class="link" data-clear style="background:none;border:0;padding:0;margin-top:.4rem;cursor:pointer;font-size:.8rem">Remove these details</button></div>` : '';
   const ID = 'ef' + Math.random().toString(36).slice(2, 7);
+  const cur = k => { if (!pj) return ''; const v = pj[k] !== undefined ? pj[k] : (pj.design && pj.design[k]); return v == null ? '' : String(v); };
+  const pills = (name, legend, arr, val) => `<fieldset class="field pillset"><legend>${legend}</legend><div class="pills-row">${arr.map(([v, l], i) => `<label class="fpill"><input type="radio" name="${name}" value="${v}" ${String(v) === String(val == null ? '' : val) || (i === 0 && !arr.some(x => String(x[0]) === String(val == null ? '' : val))) ? 'checked' : ''}><span>${l}</span></label>`).join('')}</div></fieldset>`;
+  const curMat = cur('material');
+  const tiles = `<fieldset class="field mat-tiles"><legend>What kind of fence?</legend><div class="mt-grid">${mats.map(m => `<label class="mtile"><input type="radio" name="material" value="${m.id}" ${curMat === m.id ? 'checked' : ''}><span class="mt-img">${m.image ? `<img src="${C.root}${m.image.src}" alt="" loading="lazy" width="160" height="110">${m.image.real ? '' : '<em>Concept image</em>'}` : ''}</span><span class="mt-txt"><b>${m.name}</b><small>${esc(m.tagline || '')}</small></span><i class="mt-check" aria-hidden="true"></i></label>`).join('')}<label class="mtile mt-unsure"><input type="radio" name="material" value="" ${mats.some(m => m.id === curMat) ? '' : 'checked'}><span class="mt-img"><span class="mt-q" aria-hidden="true">?</span></span><span class="mt-txt"><b>Not sure yet</b><small>Ron can recommend options on site.</small></span><i class="mt-check" aria-hidden="true"></i></label></div></fieldset>`;
   root.innerHTML = `
-  <form class="form-shell" novalidate data-form-id="${compact ? 'estimate_compact' : 'estimate_full'}">
-    <div class="steps-nav" aria-hidden="true"><i class="on"></i><i></i><i></i></div>
-    <p class="caps muted" id="${ID}-sl" aria-live="polite" style="margin:0 0 1rem">Step 1 of 3 · Your fence</p>
+  <form class="form-shell${compact ? ' is-compact' : ' is-full'}" novalidate data-form-id="${compact ? 'estimate_compact' : 'estimate_full'}">
+    ${compact ? '' : `<div class="fhead"><p class="eyebrow">Free on-site estimate</p><h2 class="h3">Tell us about your fence</h2><p>Three short steps. Only your address, ZIP and contact details are required.</p></div>`}
+    <ol class="fsteps" aria-hidden="true"><li class="on"><span>1</span>Your fence</li><li><span>2</span>Project</li><li><span>3</span>Contact</li></ol>
+    <p class="sr-only" id="${ID}-sl" aria-live="polite">Step 1 of 3 · Your fence</p>
     ${pre}
     <fieldset class="fstep" data-s="1" style="border:0;padding:0;margin:0"><legend class="sr-only">Your fence</legend>
+      ${compact ? '' : tiles + `<div class="pill-grid">${pills('height', 'Fence height', [['', 'Not sure'], ['3', '3 ft'], ['4', '4 ft'], ['5', '5 ft'], ['6', '6 ft'], ['8', '8 ft']], cur('height'))}${pills('gates', 'Gates', [['', 'Not sure'], ['0', 'None'], ['1', '1'], ['2', '2'], ['3+', '3+']], pj && pj.gates !== undefined ? String(pj.gates) : '')}${pills('removal', 'Remove an old fence?', [['', 'Not sure'], ['yes', 'Yes'], ['no', 'No']], '')}${pills('hoa', 'In an HOA?', [['', 'Not sure'], ['yes', 'Yes'], ['no', 'No']], '')}</div>`}
       <div class="fgrid">
-        <div class="field"><label for="${ID}-mat">Fence material</label><select class="input fsel" id="${ID}-mat" name="material">${opt([['', 'Not sure yet'], ...mats.map(m => [m.id, m.name])], pj && (pj.material || (pj.design && pj.design.material)))}</select></div>
+        ${compact ? `<div class="field"><label for="${ID}-mat">Fence material</label><select class="input fsel" id="${ID}-mat" name="material">${opt([['', 'Not sure yet'], ...mats.map(m => [m.id, m.name])], pj && (pj.material || (pj.design && pj.design.material)))}</select></div>` : ''}
         <div class="field"><label for="${ID}-style">Preferred style</label><input class="input" id="${ID}-style" name="style" maxlength="80" value="${esc(pj && pj.style || '')}" placeholder="e.g. Board-on-board"></div>
-        <div class="field"><label for="${ID}-h">Fence height</label><select class="input fsel" id="${ID}-h" name="height">${opt([['', 'Not sure'], ['3', '3 ft'], ['4', '4 ft'], ['5', '5 ft'], ['6', '6 ft'], ['8', '8 ft']], pj && (pj.height || (pj.design && pj.design.height)))}</select></div>
+        ${compact ? `<div class="field"><label for="${ID}-h">Fence height</label><select class="input fsel" id="${ID}-h" name="height">${opt([['', 'Not sure'], ['3', '3 ft'], ['4', '4 ft'], ['5', '5 ft'], ['6', '6 ft'], ['8', '8 ft']], pj && (pj.height || (pj.design && pj.design.height)))}</select></div>` : ''}
         <div class="field"><label for="${ID}-ft">Approximate linear feet</label><input class="input" id="${ID}-ft" name="feet" type="number" min="0" max="10000" inputmode="numeric" value="${pj && pj.feet || ''}" placeholder="Optional"></div>
-        <div class="field"><label for="${ID}-g">Gates</label><select class="input fsel" id="${ID}-g" name="gates">${opt([['', 'Not sure'], ['0', 'None'], ['1', '1'], ['2', '2'], ['3+', '3 or more']], pj && pj.gates !== undefined ? String(pj.gates) : '')}</select></div>
+        ${compact ? `<div class="field"><label for="${ID}-g">Gates</label><select class="input fsel" id="${ID}-g" name="gates">${opt([['', 'Not sure'], ['0', 'None'], ['1', '1'], ['2', '2'], ['3+', '3 or more']], pj && pj.gates !== undefined ? String(pj.gates) : '')}</select></div>` : ''}
         <div class="field"><label for="${ID}-pt">Property type</label><select class="input fsel" id="${ID}-pt" name="property_type">${opt([['residential', 'Residential'], ['commercial', 'Commercial'], ['hoa', 'HOA / community']])}</select></div>
-        <div class="field"><label for="${ID}-rem">Existing fence removal?</label><select class="input fsel" id="${ID}-rem" name="removal">${opt([['', 'Not sure'], ['no', 'No'], ['yes', 'Yes']])}</select></div>
-        <div class="field"><label for="${ID}-hoa">Is the property in an HOA?</label><select class="input fsel" id="${ID}-hoa" name="hoa">${opt([['', 'Not sure'], ['yes', 'Yes'], ['no', 'No']])}</select></div>
+        ${compact ? `<div class="field"><label for="${ID}-rem">Existing fence removal?</label><select class="input fsel" id="${ID}-rem" name="removal">${opt([['', 'Not sure'], ['no', 'No'], ['yes', 'Yes']])}</select></div>
+        <div class="field"><label for="${ID}-hoa">Is the property in an HOA?</label><select class="input fsel" id="${ID}-hoa" name="hoa">${opt([['', 'Not sure'], ['yes', 'Yes'], ['no', 'No']])}</select></div>` : ''}
         <div class="field"><label for="${ID}-tl">Timeline</label><select class="input fsel" id="${ID}-tl" name="timeline">${opt([['', 'Select'], ['asap', 'As soon as possible'], ['1-3', 'Within 1–3 months'], ['3+', '3+ months'], ['research', 'Just researching']])}</select></div>
         <div class="field"><label for="${ID}-bud">Budget range (optional)</label><select class="input fsel" id="${ID}-bud" name="budget">${opt([['', 'Prefer not to say'], ['<3k', 'Under $3,000'], ['3-6k', '$3,000–$6,000'], ['6-10k', '$6,000–$10,000'], ['10k+', '$10,000+']])}</select></div>
       </div>
@@ -54,16 +60,17 @@ function init(root) {
     </fieldset>
     <div data-status aria-live="assertive"></div>
     <div class="form-actions"><button type="button" class="btn btn-ghost-dark" data-prev hidden>Back</button><button type="button" class="btn btn-brass" data-next style="margin-left:auto">Continue <span class="arrow">→</span></button><button type="submit" class="btn btn-brass" data-submit hidden style="margin-left:auto">GET MY FREE ESTIMATE <span class="arrow">→</span></button></div>
-    <p class="fine" style="margin-top:.75rem">Prefer to talk? <a class="link" href="tel:${D.site.tel}" data-loc="form">Call Ron at ${D.site.phone}</a>.</p>
+    ${compact ? '' : `<ul class="ftrust"><li>Free, no-obligation estimate</li><li>Itemized and in writing</li><li>2-year workmanship warranty</li></ul>`}
+    <p class="fine fcall" style="margin-top:.75rem">Prefer to talk? <a class="link" href="tel:${D.site.tel}" data-loc="form">Call Ron at ${D.site.phone}</a>.</p>
   </form>`;
 
   const f = root.querySelector('form'), t0 = Date.now();
   let step = 1, files = [], started = false;
-  const steps = [...f.querySelectorAll('.fstep')], bars = [...f.querySelectorAll('.steps-nav i')];
+  const steps = [...f.querySelectorAll('.fstep')], bars = [...f.querySelectorAll('.fsteps li')];
   const names = ['Your fence', 'Project details', 'Contact information'];
   const status = f.querySelector('[data-status]');
   const show = n => {
-    step = n; steps.forEach(s => s.hidden = +s.dataset.s !== n); bars.forEach((b, i) => b.classList.toggle('on', i < n));
+    step = n; steps.forEach(s => s.hidden = +s.dataset.s !== n); bars.forEach((b, i) => { b.classList.toggle('on', i === n - 1); b.classList.toggle('done', i < n - 1); });
     f.querySelector('#' + ID + '-sl').textContent = 'Step ' + n + ' of 3 · ' + names[n - 1];
     f.querySelector('[data-prev]').hidden = n === 1; f.querySelector('[data-next]').hidden = n === 3; f.querySelector('[data-submit]').hidden = n !== 3;
     const first = steps[n - 1].querySelector('input,select,textarea'); if (first && started) first.focus();

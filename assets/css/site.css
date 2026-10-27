@@ -1058,3 +1058,6 @@ p.center,.fine.center,.section-head.center p{margin-inline:auto}
 @media(min-width:1000px) and (max-width:1179px){.hero3 .hero-trust{grid-template-columns:repeat(3,auto);gap:1rem 1.2rem}.hero3 .hero-trust li{font-size:.78rem}.hero3 .hero-trust b{font-size:.74rem}.hero-mosaic figcaption{font-size:.6rem;letter-spacing:.03em}}
 @media(max-width:999px){.hero-mosaic{height:calc(min(86vw,520px) + 110px);margin-top:1.2rem}.hero3 .hero-float{right:auto;left:-6px}}
 @media(max-width:599px){.hero-mosaic{grid-template-columns:1fr 1fr;gap:8px}.hero-mosaic figcaption{font-size:.56rem;letter-spacing:.02em;padding:.3rem .45rem}.hero3 .hero-float{font-size:.6rem;padding:.45rem .65rem}}
+.tool-intro .lead,.tool-intro p{color:#f2ece0}
+.tool-intro .eyebrow{color:var(--amber)}
+.tool-intro .crumbs,.tool-intro .crumbs a{color:#e9dfca}

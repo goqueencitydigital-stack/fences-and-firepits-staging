@@ -129,7 +129,7 @@
     const show = () => { const it = list[i]; img.src = it.src; img.alt = it.alt; cap.textContent = (it.cap || it.alt) + '  ·  ' + (i + 1) + ' / ' + list.length; };
     d.querySelectorAll('[data-lb]').forEach(btn => btn.addEventListener('click', () => {
       const g = btn.dataset.lb;
-      list = [...d.querySelectorAll('[data-lb="' + g + '"]')].map(b => ({ src: b.dataset.full, alt: b.querySelector('img').alt, cap: b.dataset.cap }));
+      list = [...d.querySelectorAll('[data-lb="' + g + '"]')].filter(b => !b.closest('[hidden]')).map(b => ({ src: b.dataset.full, alt: b.querySelector('img').alt, cap: b.dataset.cap }));
       i = list.findIndex(x => x.src === btn.dataset.full); lastFocus = btn;
       show(); lb.classList.add('open'); lb.querySelector('.x').focus(); d.body.style.overflow = 'hidden';
       w.ffTrack('gallery_open', { gallery: g });
@@ -143,6 +143,29 @@
     let x0 = null;
     lb.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; }, { passive: true });
     lb.addEventListener('touchend', e => { if (x0 === null) return; const dx = e.changedTouches[0].clientX - x0; if (Math.abs(dx) > 40) (dx > 0 ? lb.querySelector('.pv') : lb.querySelector('.nx')).click(); x0 = null; });
+  }
+
+  /* ---------- Photo gallery: material filter + show more ---------- */
+  const pg = d.getElementById('photo-gallery');
+  if (pg) {
+    const items = [...pg.querySelectorAll('.pg-grid li')], more = d.getElementById('pg-more'), st = d.getElementById('pg-status'), STEP = 24;
+    let cat = 'all', shown = STEP;
+    const render = () => {
+      const match = items.filter(li => cat === 'all' || li.dataset.cat === cat);
+      items.forEach(li => { li.hidden = true; });
+      match.forEach((li, i) => { li.hidden = i >= shown; });
+      more.parentElement.hidden = match.length <= shown;
+      st.textContent = 'Showing ' + Math.min(shown, match.length) + ' of ' + match.length + ' photos';
+    };
+    pg.querySelectorAll('.pg-f').forEach(b => b.addEventListener('click', () => {
+      pg.querySelectorAll('.pg-f').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+      cat = b.dataset.pg; shown = STEP; render(); w.ffTrack('gallery_filter', { material: cat });
+    }));
+    more.addEventListener('click', () => {
+      const before = items.filter(li => !li.hidden).length; shown += STEP; render();
+      const next = items.filter(li => !li.hidden)[before]; next && next.querySelector('button').focus();
+    });
+    render();
   }
 
   /* ---------- Project gallery filters ---------- */

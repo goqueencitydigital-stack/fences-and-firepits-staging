@@ -115,7 +115,10 @@ function init(root) {
     if (!validate(3)) return;
     if (f.website_url.value || Date.now() - t0 < 3000) { status.innerHTML = '<p class="notice warn">Please wait a moment and try again.</p>'; return; }
     const btn = f.querySelector('[data-submit]'); btn.disabled = true; btn.textContent = 'Sending…';
-    const fd = new FormData(f); fd.delete('files[]'); files.forEach(x => fd.append('files[]', x));
+    const fd = new FormData(f); fd.delete('files[]');
+    const ready = []; for (const x of files) ready.push(await shrink(x));
+    if (ready.reduce((a, x) => a + x.size, 0) > 4e6) { btn.disabled = false; btn.innerHTML = 'GET MY FREE ESTIMATE <span class="arrow">→</span>'; status.innerHTML = `<p class="notice warn"><strong>Your photos are too large to send online.</strong> Remove one or two, or text them to Ron at <a class="link" href="sms:${D.site.tel}">${D.site.phone}</a> after you submit.</p>`; return; }
+    ready.forEach(x => fd.append('files[]', x, x.name));
     fd.append('form_id', f.dataset.formId);
     if (pj) { fd.append('origin', pj.origin || ''); fd.append('project_summary', JSON.stringify(pj.summary || [])); if (pj.design) fd.append('design', JSON.stringify(pj.design)); if (pj.layout) fd.append('layout', JSON.stringify(pj.layout)); if (pj.layoutImage) fd.append('layout_image', pj.layoutImage); if (pj.quiz) fd.append('quiz', JSON.stringify(pj.quiz)); }
     const r = await submitLead(fd);
@@ -128,11 +131,22 @@ function init(root) {
       status.innerHTML = `<p class="notice warn"><strong>Staging preview — this request was not sent.</strong> Validation passed and the data below would be delivered to ${D.site.leadRecipients.join(', ')} on production. Fields: ${[...fd.keys()].filter(k => !['layout_image', 'website_url'].includes(k)).join(', ')}.</p>`;
       window.ffTrack('form_submit_staging', { form: f.dataset.formId });
     } else {
-      status.innerHTML = `<p class="notice bad"><strong>Your request did not go through.</strong> Nothing was lost on your screen — please try again, or call Ron directly at <a class="link" href="tel:${D.site.tel}">${D.site.phone}</a>.</p>`;
+      status.innerHTML = `<p class="notice bad"><strong>Your request did not go through.</strong> ${r.error && !/^(network|Server error)/.test(r.error) ? esc(r.error) + ' ' : ''}Nothing was lost on your screen — please try again, or call Ron directly at <a class="link" href="tel:${D.site.tel}">${D.site.phone}</a>.</p>`;
       window.ffTrack('form_submit_error', { form: f.dataset.formId, error: r.error });
     }
     status.querySelector('.notice') && status.querySelector('.notice').scrollIntoView({ block: 'center', behavior: 'smooth' });
   });
   show(1);
+}
+// Downscale large JPG/PNG/WebP photos in the browser so uploads stay under the 4 MB request limit.
+async function shrink(file) {
+  if (!/^image\/(jpeg|png|webp)$/.test(file.type) || file.size < 900e3 || !window.createImageBitmap) return file;
+  try {
+    const bmp = await createImageBitmap(file), k = Math.min(1, 1800 / Math.max(bmp.width, bmp.height));
+    const cv = document.createElement('canvas'); cv.width = Math.round(bmp.width * k); cv.height = Math.round(bmp.height * k);
+    cv.getContext('2d').drawImage(bmp, 0, 0, cv.width, cv.height);
+    const blob = await new Promise(r => cv.toBlob(r, 'image/jpeg', 0.82));
+    return blob && blob.size < file.size ? new File([blob], file.name.replace(/\.\w+$/, '') + '.jpg', { type: 'image/jpeg' }) : file;
+  } catch (e) { return file; }
 }
 function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]); }

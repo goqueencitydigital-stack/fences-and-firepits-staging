@@ -1404,3 +1404,8 @@ h1,h2,.h-hero,.h1,.h2,.h3,.display,.pillars-h{font-weight:800;letter-spacing:-.0
 @media(min-width:1320px) and (max-width:1519px){.nav>ul>li>a,.nav>ul>li>button{font-size:.86rem}}
 .nav>ul>li>a,.nav>ul>li>button,.btn{letter-spacing:.03em}
 .nav>ul>li>button svg{flex:none;width:12px;height:12px;max-width:none}
+/* v9: calmer hero */
+.hero3 .hero-trust li{align-items:center}
+.hero3 .hero-trust b{margin:0}
+.hero3 .hero-secondary a{border-bottom-color:transparent;opacity:.9}
+.hero3 .hero-secondary a:hover{border-bottom-color:currentColor;opacity:1}

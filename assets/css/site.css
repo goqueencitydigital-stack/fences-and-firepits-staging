@@ -2,7 +2,7 @@
    Fences & Firepits — Design System v2 (staging)
    Matches the Deck Company of Charlotte design language (Ron's sister brand):
    dark brown #432100 / #1A0F00 · amber #E5A843 · cream #F6EED9 · white
-   Type: Saira Expanded Black (stand-in for Eurostile) + Archivo (stand-in for Acumin Pro)
+   Type: Figtree (v8 override below; originally Saira + Archivo)
    Square corners, heavy uppercase headings, amber buttons.
    ========================================================================= */
 :root{
@@ -1388,3 +1388,19 @@ a.nchip:hover{border-color:var(--amber-ink,#94600F);text-decoration:underline}
 .story-card blockquote{margin:.5rem 0 0;font-size:1.05rem;line-height:1.55;border-left:3px solid #E5A843;padding-left:1rem}
 .ftr-trust{color:#E5A843;font-weight:600}
 @media(min-width:900px){.about-pillars{grid-template-columns:repeat(3,1fr)}.about-pillars .pillar{padding-bottom:1.5rem}}
+/* ===== v7: scale — site read as "zoomed out" on laptops/desktops ===== */
+html{font-size:106.25%}
+@media(min-width:1200px){html{font-size:112.5%}:root{--wrap:1280px}}
+@media(min-width:1600px){:root{--wrap:1360px}}
+/* keep the full desktop nav on common laptop widths (1180–1319) instead of a hamburger */
+@media(min-width:1180px) and (max-width:1319px){.nav{display:block}.menu-btn{display:none!important}.hdr-phone{display:none}.hdr-cta{margin-left:.75rem}
+  .nav>ul>li>a,.nav>ul>li>button{font-size:.74rem;padding-inline:.45rem;letter-spacing:.02em}}
+@media(min-width:1320px) and (max-width:1519px){.nav>ul>li>a,.nav>ul>li>button{font-size:.78rem;padding-inline:.5rem}}
+/* ===== v8: brand typeface Figtree (same family as the Bohanan Construction build) ===== */
+:root{--font-display:'Figtree',ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif;--font-body:'Figtree',ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif}
+*{font-stretch:normal!important}
+h1,h2,.h-hero,.h1,.h2,.h3,.display,.pillars-h{font-weight:800;letter-spacing:-.01em}
+@media(min-width:1180px) and (max-width:1319px){.nav>ul>li>a,.nav>ul>li>button{font-size:.8rem}}
+@media(min-width:1320px) and (max-width:1519px){.nav>ul>li>a,.nav>ul>li>button{font-size:.86rem}}
+.nav>ul>li>a,.nav>ul>li>button,.btn{letter-spacing:.03em}
+.nav>ul>li>button svg{flex:none;width:12px;height:12px;max-width:none}

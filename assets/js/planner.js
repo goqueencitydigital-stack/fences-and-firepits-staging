@@ -20,7 +20,7 @@ root.innerHTML = `
   <label class="tbtn" style="display:inline-flex;align-items:center;cursor:pointer">Upload plat or photo<input type="file" accept="image/*" id="pl-file" class="sr-only"></label>
 </div>
 <div class="planner-wrap"><canvas id="pl-c" width="${W}" height="${H}" aria-label="Fence layout drawing area. Click or tap to place fence points." role="img"></canvas></div>
-<div class="legend" style="margin:.75rem 0"><span><i style="background:#B89B67"></i>Standard fence</span><span><i style="background:#5fa37b"></i>Privacy section</span><span><i style="background:#f7f6f2;border:1px solid #999"></i>Gate</span><span id="pl-scale"></span></div>
+<div class="legend" style="margin:.75rem 0"><span><i style="background:#CDB06A"></i>Standard fence</span><span><i style="background:#5fa37b"></i>Privacy section</span><span><i style="background:#f7f6f2;border:1px solid #999"></i>Gate</span><span id="pl-scale"></span></div>
 <p class="fine" id="pl-hint" aria-live="polite">Click or tap to place fence corners. Use "Finish run" to start a separate line.</p>
 <div class="form-shell" style="margin-top:1rem">
   <dl class="kv"><dt>Total fence</dt><dd id="pl-total">0 ft</dd><dt>Privacy sections</dt><dd id="pl-priv">0 ft</dd><dt>Gates</dt><dd id="pl-gates">0</dd></dl>
@@ -57,7 +57,7 @@ function draw() {
   else { ctx.strokeStyle = 'rgba(247,246,242,.07)'; ctx.lineWidth = 1; for (let x = 0; x < W; x += pxPerFt * 5) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); } for (let y = 0; y < H; y += pxPerFt * 5) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); } ctx.fillStyle = 'rgba(247,246,242,.35)'; ctx.font = '14px sans-serif'; ctx.fillText('Grid: each square = 5 ft', 16, H - 16); }
   segs().forEach(s => {
     const priv = segType[s.key] === 'privacy';
-    ctx.strokeStyle = priv ? '#5fa37b' : '#B89B67'; ctx.lineWidth = priv ? 9 : 6; ctx.lineCap = 'round';
+    ctx.strokeStyle = priv ? '#5fa37b' : '#CDB06A'; ctx.lineWidth = priv ? 9 : 6; ctx.lineCap = 'round';
     ctx.beginPath(); ctx.moveTo(...s.a); ctx.lineTo(...s.b); ctx.stroke();
     const ft = Math.round(dist(s.a, s.b) / pxPerFt), mx = (s.a[0] + s.b[0]) / 2, my = (s.a[1] + s.b[1]) / 2;
     ctx.font = '600 15px sans-serif'; const tw = ctx.measureText(ft + ' ft').width;

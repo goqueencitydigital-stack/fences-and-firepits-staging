@@ -25,7 +25,7 @@ export async function makePdf({ title, subtitle, image, rows, notes = [], filena
   const shield = await imgToData(window.FF_CONFIG.root + 'img/brand/shield.png');
   if (shield) doc.addImage(shield, 'PNG', M, 20, 54, 46);
   doc.setTextColor(247, 246, 242); doc.setFont('times', 'normal'); doc.setFontSize(22); doc.text('Fences & Firepits', M + 66, 46);
-  doc.setFont('helvetica', 'normal'); doc.setFontSize(8.5); doc.setTextColor(184, 155, 103);
+  doc.setFont('helvetica', 'normal'); doc.setFontSize(8.5); doc.setTextColor(205, 176, 106);
   doc.text('CHARLOTTE FENCE INSTALLATION  ·  ' + site.phone + '  ·  ' + site.email, M + 66, 62);
   let y = 132;
   doc.setTextColor(17, 19, 21); doc.setFont('times', 'normal'); doc.setFontSize(24); doc.text(title, M, y);
